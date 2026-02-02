@@ -1,0 +1,111 @@
+---
+title: "Workflow - Measuring accessibility in polycentric urban form: A reproducible network-based approach for urban analytics"
+output: html_document
+---
+
+## Load packages
+
+```{r, echo=FALSE}
+library(rmarkdown)
+```
+
+## Set root directory
+
+Set path to your root directory here.
+
+```{r setup, include=FALSE}
+my_wd <- 'path/to/workspace/'
+  
+knitr::opts_knit$set(root.dir = normalizePath(my_wd))
+```
+
+## 00. Pre-processing
+
+**Description:** Prepares input data with python script. Here, preparation of the census csv was necessary to obtain a data set with a valid point geometry column. Requirements for input data are described in [data_input.md](https://github.com/anonymousanalysis/accessibility-analysis-review/blob/main/data_input.md), adjust pre-processing steps as needed to achieve them.
+
+**Script:** `00_prepare_zensuspoints.py`\
+**Run in:** *Python*
+
+**Parameters:**
+
+-   `worksp` – workspace path [string]
+-   `umkreis` – buffer distance [numeric]
+-   `crs` – CRS to work in [string with epsg code]
+-   `zensus_crs` – CRS of the census coordinates [code as numeric]
+
+Place input files in the respective folder and change file names and parameters if necessary.
+
+## 01. Road network points with population values per region
+
+**Description:** Loads street network from OSM. Projection of a point grid of any grid width onto a road network, adding the number of inhabitants to points.
+
+**Script:** `01_OSM_highways2points+einwohner.py`\
+**Run in:** *QGIS Python console*\
+**Run time for provided data set:** 2 min
+
+**Parameters:**
+
+-   `worksp` – workspace path (same as 00) [string]
+-   `umkreis` – buffer distance (same as 00) [numeric]
+-   `crs` – CRS to work in (same as 00) [string with epsg code]
+-   `count_nearest_destinations` - folder name extension, e.g. '50perc' for using only half of the points [string]
+-   `grid_space` - grid width of points on road network [integer]
+-   `ew_field` - field name with population [string]
+-   `zensus_geomtype` - geometry type: 'Point', 'Polygon' or 'Raster' [string]
+
+Place input files in the respective folder and change file names and parameters if necessary. The script creates all necessary folders. Intermediate data will be saved in folders by region. Census data can be provided as a point grid, as a polygon grid or as a raster layer.
+
+## 02. Computation of travel-time/distance between each origin and all destinations for each region
+
+**Description:**: Selection of 50 % of all points (less computation time), requests to local ORS instance - OD matrix is created from each starting point to all target points.
+
+**Script:** `02_centrality_50Prozent.py`\
+**Run in:** *QGIS Python console*\
+**Run time for provided data set:** 33 min (2581 points)
+
+**Parameters:**
+
+-   `worksp` – workspace path (same as 00 and 01) [string]
+-   `umkreis` – buffer distance (same as 00 and 01) [numeric]
+-   `crs` – CRS to work in (same as 00) [string with epsg code]
+-   `count_nearest_destinations` - folder name extension, e.g. '50perc' for using only half of the points (same as 01) [string]
+-   `grid_space` - grid width of points on road network (same as 01) [integer]
+-   `ew_field` - field name with population (same as 01) [string]
+-   `get_matrix` - Should distance/duration matrices be calculated? [bool]
+
+If distance/duration matrices already exist, `get_matrix`can be set to false. This can be helpful if new population should be provided or during debugging but should be used carefully because it can lead to inconsistencies in the sampled points and matrices.
+
+## 03. Application of impedance functions and population weighting, normalisation and mapping to urban structures
+
+Description: Merge all matrices, apply decay functions and weighting for each point, eliminate extreme values. Calculate composite index from driving times and walking/cycling distances. Map points to urban structures.
+
+**Script:** `03_impedance+weighting_50perc.R`\
+**Run in:** *R*
+**Run time for provided data set:** 3 min with merging matrix files (2581 files)
+
+**Parameters:**
+Set these in the code file:
+
+-   `date`- automatically takes today's date but needs to be set manually if using folders from another data; use format "25_08_04" [string]
+-   `ew_field` - field name with population (same as 01 and 02) [string]
+-   `regionfield` - field name with regionnames [string]
+-   `interpolation_field` - accessibility field to interpolate in raster [string of CC_mean, CC_mean, CC_mean_car, CC_mean_shortdist]
+
+-   `shapes_name` - name of polygon geometry file (input and output) [string]
+-   `layer_name` - name of polygon geometry file layer (input and output) [string]
+
+-   `merge_matrix` - Should individual matrices be loaded and merged? [bool]
+-   `new_accessibility` - Should new accessibility values be calculated? Else existing point files will be loaded? [bool]
+-   `join_shapes` - Should CC values be joined to shape geometries? [bool]
+-   `use_filtered_shapes` - Should a pre-filtered dataset of polygon shapes be loaded if it exists? [bool]
+-   `join_all_shapes` - Should the shape datasets with CC values joined from each region be joined together? [bool]
+-   `interpolation` - Should an interpolation raster be generated? [bool]
+-   `join_all_interp` - Should the interpolation rasters from all regions be joined into ne file? [bool]
+
+
+Loading and merging the individual point matrices takes some time. You can set `merge_matrix` to False if a merged matrix from this point sample already exist and you are only adjusting the index calculation.
+Checking which step of the other boolean variables you need and adjusting them accordingly can also save time but rather marginally. 
+
+```{r}
+source("./code/03_impedance+weighting_50perc.R", local = TRUE)
+```
