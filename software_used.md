@@ -1,10 +1,10 @@
 The following software was used to execute the workflow provided in this repository. 
 
 ## R and R Packages
-R version 4.3.2 (2023-10-31 ucrt)
-Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 10 x64 (build 19045)
-Matrix products: default
+* R version 4.3.2 (2023-10-31 ucrt)
+* Platform: x86_64-w64-mingw32/x64 (64-bit)
+* Running under: Windows 10 x64 (build 19045)
+* Matrix products: default
 
 locale:
 * LC_COLLATE=German_Germany.utf8
