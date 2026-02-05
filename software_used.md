@@ -56,6 +56,7 @@ Libraries
 
 Active Python plugins
 * ORStools 1.8.4
+* QuickOSM 2.2.3
 
 Python Packages
 * geopandas version 0.13.2
