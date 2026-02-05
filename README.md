@@ -51,9 +51,12 @@ Further details on the software used can be found in [software_used.md](https://
 
 Before running: 
 
-* Set up your own OpenRouteService instance. See details here: https://giscience.github.io/openrouteservice/run-instance/
-* Install ORSTools QGIS Plugin: https://github.com/GIScience/orstools-qgis-plugin
-* Set your local instance as provider for the plugin
+* ORS:
+  * Set up your own OpenRouteService instance. See details here: https://giscience.github.io/openrouteservice/run-instance/
+  * Install ORSTools QGIS Plugin: https://github.com/GIScience/orstools-qgis-plugin
+  * Set your local instance as provider for the plugin
+* QuickOSM:
+  * Install QuickOSM QGIS Plugin: https://quickosm.github.io/QuickOSM/
 
 
 ### Description of the code
