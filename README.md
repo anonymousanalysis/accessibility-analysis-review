@@ -71,7 +71,7 @@ The code is taken from an application of the approach to vacant lots in four reg
 
 ### Additional Approaches and Applications
 
-We also applied the approach for an area of interest with two neighbouring urban centres which some degree of interaction of their functional regions. While these centres have different centralities in terms of absolute reachable population but with a similar role as urban centers for their specific regions. 
+We also applied the approach for an area of interest with two neighbouring urban centres with some degree of interaction of their functional regions. While these centres have different centralities in terms of absolute reachable population they have a similar role as urban centers for their specific regions. 
 We found running the workflow for each region separately and choosing the maximum value in overlapping areas to be a successful approach to handle this.
 
 If census data is not available, the [Global Human Settlement (GHS) population](https://human-settlement.emergency.copernicus.eu/download.php?ds=pop) raster layer has been used to provide population data in several projects. 
