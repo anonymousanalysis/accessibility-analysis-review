@@ -117,7 +117,7 @@ for (region in regions) {
     b2_bike_km <- 0.871
     
     b1_drive_h <- 0.019
-    b1_drive_h <- 1.340
+    b2_drive_h <- 1.340
     
     powerexp <- function(b1,b2,x){
       exp(-b1 * x^b2)
@@ -127,7 +127,7 @@ for (region in regions) {
     joined <- df.0 %>%
       left_join(destins, join_by(TO_ID == id)) %>%
       mutate(
-        weight_exp_h = powerexp(b1_drive_h, b1_drive_h, DURATION_H) * EW_10,
+        weight_exp_h = powerexp(b1_drive_h, b2_drive_h, DURATION_H) * EW_10,
         exp_decay_km = (powerexp(b1_walk_km, b2_walk_km, DIST_KM) + powerexp(b1_bike_km, b2_bike_km, DIST_KM))/2,  # mean of walking and cycling for short distance weighting
         weight_exp_km = exp_decay_km * EW_10,
       )
